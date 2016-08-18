@@ -1,5 +1,4 @@
 //CRMForm Plugin v0.2.0
-//puts checkmark labels below the input, for styling purposes
 if(typeof jQuery === 'undefined'){
 	throw new Error('The CRM Form plugin requires jQuery');
 }
@@ -161,15 +160,20 @@ if(typeof jQuery === 'undefined'){
 		                  
 		                  //handle birthday dropdowns
 		                  if(theSelectId.indexOf('birthday') > -1){
-		                    newForm += '<div class="' + containerClass + '">';
-		                    newForm += '<label class="selectLabel">' + theLabel.text() + '</label>';
-		                    newForm += theControls.filter('select#birthday_month').addClass(inputClass)[0].outerHTML;
-		                    theControls.filter('select#birthday_month').remove();
-		                    newForm += theControls.filter('select#birthday_day').addClass(inputClass)[0].outerHTML;
-		                    theControls.filter('select#birthday_day').remove();
-		                    newForm += theControls.filter('select#birthday_year').addClass(inputClass)[0].outerHTML;
-		                    theControls.filter('select#birthday_year').remove();
-		                    newForm += '</div>';
+	                        newForm += '<div class="' + containerClass + '">';
+	                        newForm += '<label class="selectLabel">' + theLabel.text() + '</label>';
+	                        newForm += theControls.filter('select#birthday_month').addClass(inputClass)[0].outerHTML;
+	                        newForm += '</div>';
+	                        theControls.filter('select#birthday_month').remove();
+	                         newForm += '<div class="' + containerClass + '">';
+	                        newForm += theControls.filter('select#birthday_day').addClass(inputClass)[0].outerHTML;
+	                        newForm += '</div>';
+	                        theControls.filter('select#birthday_day').remove();
+	                         newForm += '<div class="' + containerClass + '">';
+	                        newForm += theControls.filter('select#birthday_year').addClass(inputClass)[0].outerHTML;
+	                        newForm += '</div>';
+	                        theControls.filter('select#birthday_year').remove();
+	                        newForm += '</div>';
 		                  }else{
 		                    
 		                    //Select has an id, but is not a birthday.  unlikely scenario
