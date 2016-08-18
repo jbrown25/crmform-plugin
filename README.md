@@ -9,7 +9,7 @@ The plugin does three basic things:
 2. Lets you clone multiple instances of the form
 3. Corrects some of the odd behavior of the landing page editor
 
-The out-of-the-box AllClients form is contained in a table, which is restrictive design-wise.  The CRMForm plugin pulls the form out of the table and wraps the inputs in divs, then removes the table from the documents.
+The out-of-the-box AllClients form is contained in a table, which is restrictive design-wise.  The CRMForm plugin pulls the form out of the table and wraps the inputs in divs, then removes the table from the document.
 
 ##USAGE
 
