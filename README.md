@@ -67,8 +67,10 @@ Cloned forms will be synced so that when a user fills out one, all other instanc
 
 ##NOTES
 
-Form spacers have to be given an explicit height, otherwise they just disappear.  They appear as such in the form:
+Form spacers have to be given an explicit height
 
 ```html
-<div class="formSpacer"></div>
+.formSpacer {
+  height: 32px;
+}
 ```
