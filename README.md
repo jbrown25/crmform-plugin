@@ -69,7 +69,7 @@ Cloned forms will be synced so that when a user fills out one, all other instanc
 
 Form spacers have to be given an explicit height
 
-```html
+```css
 .formSpacer {
   height: 32px;
 }
