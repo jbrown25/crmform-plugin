@@ -41,6 +41,8 @@ inputClass | String | none | The class for inputs, selects, and textareas.  Will
 
 ###BOOTSTRAP EXAMPLE
 
+This will set up the form with Twitter Bootstrap classes
+
 ```javascript          
 $('.form-container').CRMForm({
 	style: "placeholders",
@@ -50,6 +52,8 @@ $('.form-container').CRMForm({
 });
 ```
 
+##CLONING THE FORM
+
 You may wish to include multiple instances of the same form on a single landing page.  For example, you may have the form at the top and bottom of the page, or you may have the form in the masthead and a popup.  Call cloneForm and pass the location of the second form:
 
 ```javascript
@@ -58,9 +62,13 @@ $('.form-container').CRMForm({
 }).cloneForm('.second-form-container');
 ```
 
-Cloned forms will be synced so that when a user fills out one, all other instances of the form will be filled out simultaneously with the same information.
+Cloned forms will be synced so that when a user fills out one, all other instances of the form will be filled out simultaneously with the same information.  They will take on all the settings of the original form. 
 
 
 ##NOTES
 
-Form spacers have to be given an explicit height, otherwise they just disappear.  
+Form spacers have to be given an explicit height, otherwise they just disappear.  They appear as such in the form:
+
+```html
+<div class="formSpacer"></div>
+```
