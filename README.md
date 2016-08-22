@@ -75,7 +75,7 @@ Form spacers have to be given an explicit height
 }
 ```
 
-The plugin works best if you replace the default submit button.  Include this in the CSS:
+The plugin works best if you replace the default submit button.  Hide the button:
 
 ```css
 .submitButton {
