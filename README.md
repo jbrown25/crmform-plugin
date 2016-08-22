@@ -71,6 +71,23 @@ Form spacers have to be given an explicit height
 
 ```css
 .formSpacer {
-  height: 32px;
+	height: 32px;
 }
 ```
+
+The plugin works best if you replace the default submit button.  Include this in the CSS:
+
+```css
+.submitButton {
+	display: none;
+}
+```
+
+and paste this below each instance of the form (replace the class name with your own):
+
+```html
+<a href="javascript:if(validateForm() != false){myForm.submit()};" class="your_own_button_class">
+	<!--type:text; label:"Text for Button"; default:"Submit This Form!"; clickable:1;-->
+</a>
+```
+
