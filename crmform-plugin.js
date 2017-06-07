@@ -23,12 +23,7 @@ if(typeof jQuery === 'undefined'){
 
 		//replace the form at its current location
 		try{
-			var theClonedForm = tableToInline(
-				oldForm, 
-				settings.style, 
-				settings.containerClass, 
-				settings.checkboxContainerClass, 
-				settings.inputClass);
+			var theClonedForm = tableToInline(oldForm, settings);
 		}catch(e){
 			console.log(e);
 		}
@@ -68,9 +63,13 @@ if(typeof jQuery === 'undefined'){
 	};
 
 	//returns new form (string)
-	function tableToInline(theForm, formStyle, containerClass, checkboxContainerClass, inputClass){
+	//formStyle = props.style
+	//containerClass = props.containerClass
+	//checkboxContainerClass = props.checkboxContainerClass
+	//inputClass = props.inputClass
+	function tableToInline(theForm, props){
 	    //clone form
-	    var newForm = "";
+	    var newForm = [];
 
 	    var theRow, theLabel, theControls, theCheckbox;
 		// Iterate form table rows
@@ -82,151 +81,203 @@ if(typeof jQuery === 'undefined'){
 		        
 		        //handle morelabel header
 		        if (theLabel.hasClass('morelabel')) {
-
-		          newForm += '<div class="' + containerClass + '">';
-		          newForm += theLabel[0].outerHTML;
-		          newForm += '</div>';
+		        	newForm.push(moreLabel(theLabel, containerClass));
 		        }
 		        if (theControls.length) {
 		            //handle input type text, email, phone, etc
 		            if (theControls.filter('input.field').length) {
+		                
 		                var theInputfield = theControls.filter('input.field').clone();
-		                if(inputClass) theInputfield.addClass(inputClass);
-
-		                switch(formStyle) {
-		                	case "placeholders":
-		                		//Text placeholder, then add field to form
-		                        theInputfield.attr('placeholder', theLabel.text());
-		                        newForm += '<div class="' + containerClass + '">';
-		                        newForm += theInputfield[0].outerHTML;
-		                        newForm += '</div>';
-		                        break;
-		                    case "labels":
-		                    	// add label and field to form
-		                        newForm += '<div class="' + containerClass + '">';
-                                newForm += '<label class="inputLabel">' + theLabel.text() + '</label>' + theInputfield[0].outerHTML;
-                                newForm += '</div>';
-		                        break;
-		                    default:
-		                    	//Text placeholder, then add field to form
-		                        theInputfield.attr('placeholder', theLabel.text());
-		                        newForm += '<div class="' + containerClass + '">';
-		                        newForm += theInputfield[0].outerHTML;
-		                        newForm += '</div>';
-		                        break;	                        	
-		                }
-
+		                newForm.push(textInput(theLabel, theInputfield, props));
 		        
 		            } else if (theControls.filter('textarea.fieldComments').length) {
 		                
 		                var theTextarea = theControls.filter('textarea.fieldComments').clone();
-		                if(inputClass) theTextarea.addClass(inputClass);
-		                
-		                switch(formStyle) {
-		                	case "placeholders":
-		                    	//Textarea placeholder, then add textarea to form
-		                        theTextarea.attr('placeholder', theLabel.text());
-		                        newForm += '<div class="' + containerClass + '">';
-		                        newForm += theTextarea[0].outerHTML;
-		                        newForm += '</div>';
-		                        break;
-
-		                    case "labels":
-		                        // add label and field to form
-		                        newForm += '<div class="' + containerClass + '">';		                     
-		                        newForm += '<label class="textareaLabel">' + theLabel.text() + '</label>' + theTextarea[0].outerHTML;
-		                        newForm += '</div>';
-		                        break;
-
-		                    default:
-		                    	//Textarea placeholder, then add textarea to form
-		                        theTextarea.attr('placeholder', theLabel.text());
-		                        newForm += '<div class="' + containerClass + '">';
-		                        newForm += theTextarea[0].outerHTML;
-		                        newForm += '</div>';
-		                        break;
-		                }
-
+		                newForm.push(textInput(theLabel, theTextarea, props));
 		                
 		            } else if (theControls.filter('select.fieldSelect').length) {
 		                
 		                //handle select dropdown
-		                var theSelect = theControls.filter('select.fieldSelect').clone();
+		                var theSelect = theControls.filter('select.fieldSelect').clone();		        
+		                newForm.push(selectField(theLabel, theSelect, props));
 		                
-		                if(inputClass) theSelect.addClass(inputClass);
-		                
-		                var theSelectId = theSelect.attr('id');
-		                if(theSelectId){
-		                  
-		                  //handle birthday dropdowns
-		                  if(theSelectId.indexOf('birthday') > -1){
-	                        newForm += '<div class="' + containerClass + '">';
-	                        newForm += '<label class="selectLabel">' + theLabel.text() + '</label>';
-	                        newForm += theControls.filter('select#birthday_month').addClass(inputClass)[0].outerHTML;
-	                        newForm += '</div>';
-	                        theControls.filter('select#birthday_month').remove();
-	                         newForm += '<div class="' + containerClass + '">';
-	                        newForm += theControls.filter('select#birthday_day').addClass(inputClass)[0].outerHTML;
-	                        newForm += '</div>';
-	                        theControls.filter('select#birthday_day').remove();
-	                         newForm += '<div class="' + containerClass + '">';
-	                        newForm += theControls.filter('select#birthday_year').addClass(inputClass)[0].outerHTML;
-	                        newForm += '</div>';
-	                        theControls.filter('select#birthday_year').remove();
-	                        newForm += '</div>';
-		                  }else{
-		                    
-		                    //Select has an id, but is not a birthday.  unlikely scenario
-		                    newForm += '<div class="' + containerClass + '">';
-		                    newForm += '<label class="selectLabel">' + theLabel.text() + '</label>';
-		                    newForm += theSelect[0].outerHTML;
-		                    newForm += '</div>';
-		                  }
-		                }else{
-
-		                  //select has no id, not a birthday.
-		                  newForm += '<div class="' + containerClass + '">';
-		                  newForm += '<label class="selectLabel">' + theLabel.text() + '</label>';
-		                  newForm += theSelect[0].outerHTML;
-		                  newForm += '</div>';
-		                }            
+		                //if birthday, remove birthday fields
+		                if(theSelect.attr('id')){
+		                	if(theSelect.attr('id').indexOf > -1){
+			                	theControls.filter('#birthday_month').remove();
+			                	theControls.filter('#birthday_day').remove();
+			                	theControls.filter('#birthday_year').remove();
+		                	}
+		                }
 		            }
 		        }
 		    } else {
 		        theCheckbox = $(this).find('input.fieldCheckbox');
 		        theLabel = $(this).find('.checkLabel');
-		        
+		       
 		        //handle checkbox
 		        if (theCheckbox.length) {
-		            if (theLabel.length) {		              
-		              if(checkboxContainerClass){
-		              	newForm += '<div class="' + checkboxContainerClass + '">';
-		              }else{
-		              	newForm += '<div class="' + containerClass + '">';
-		              }
-
-		              newForm += theCheckbox[0].outerHTML;
-		              newForm += theLabel[0].outerHTML;
-		              newForm += '</div>';
-		            }else{
-		              newForm += '<div class="' + containerClass + '">';
-		              newForm += theCheckbox[0].outerHTML;
-		              newForm += '</div>';
-		            }
+		        	newForm.push(checkboxField(theLabel, theCheckbox, props));
 		        }else {
 		          //If there's no fieldLabel and no checkbox, check for a spacer
 		          var spacer = theRow.find('td[colspan="2"]');
 		          if(spacer.html() === '&nbsp;' || spacer.find('div.fieldSpacer').length){
-		            newForm += '<div class="formSpacer"></div>';
+		            newForm.push('<div class="formSpacer"></div>');
 		          }
 		        }
 		    }
 		});
-		newForm += '<div class="' + containerClass + '">';
-		newForm += $('.submitButton')[0].outerHTML;
-		newForm += '</div>';
+		
+		newForm.push(getSubmitButton(props.containerClass));
 
-		return newForm;
+		return newForm.join();
+	}
+
+	function moreLabel(fieldLabel, props){
+		var thisLabel = "";
+
+		thisLabel += '<div class="' + props.containerClass + '">';
+		thisLabel += fieldLabel[0].outerHTML;
+		thisLabel += '</div>';
+
+		return thisLabel;
+	}
+
+	function textInput(fieldLabel, inputField, props){
+		var thisInput = "";
+
+		if(props.inputClass) inputField.addClass(props.inputClass);
+
+		switch(props.style) {
+			case "placeholders":
+				//Text placeholder, then add field to form
+		        theInputfield.attr('placeholder', fieldLabel.text());
+		        thisInput += '<div class="' + props.containerClass + '">';
+		        thisInput += inputField[0].outerHTML;
+		        thisInput += '</div>';
+		        break;
+		    case "labels":
+		    	// add label and field to form
+		        thisInput += '<div class="' + props.containerClass + '">';
+		        thisInput += '<label class="inputLabel">' + fieldLabel.text() + '</label>' + inputField[0].outerHTML;
+		        thisInput += '</div>';
+		        break;
+		    default:
+		    	//Text placeholder, then add field to form
+		        theInputfield.attr('placeholder', fieldLabel.text());
+		        thisInput += '<div class="' + props.containerClass + '">';
+		        thisInput += inputField[0].outerHTML;
+		        thisInput += '</div>';
+		        break;	                        	
+		}
+
+		return thisInput;
+	}
+
+	function textArea(fieldLabel, inputField, props){
+		var thisTextarea = "";
+
+		if(props.inputClass) inputField.addClass(props.inputClass);
+
+		switch(props.style) {
+			case "placeholders":
+		    	//Textarea placeholder, then add textarea to form
+		        inputField.attr('placeholder', fieldLabel.text());
+		        thisTextarea += '<div class="' + props.containerClass + '">';
+		        thisTextarea += inputField[0].outerHTML;
+		        thisTextarea += '</div>';
+		        break;
+
+		    case "labels":
+		        // add label and field to form
+		        thisTextarea += '<div class="' + props.containerClass + '">';		                     
+		        thisTextarea += '<label class="textareaLabel">' + fieldLabel.text() + '</label>' + inputField[0].outerHTML;
+		        thisTextarea += '</div>';
+		        break;
+
+		    default:
+		    	//Textarea placeholder, then add textarea to form
+		        inputField.attr('placeholder', fieldLabel.text());
+		        thisTextarea += '<div class="' + props.containerClass + '">';
+		        thisTextarea += inputField[0].outerHTML;
+		        thisTextarea += '</div>';
+		        break;
+		}
+
+		return thisTextarea;
+	}
+
+	function selectField(fieldLabel, inputField, props){
+		var thisSelect = "";
+
+		if(props.inputClass) inputField.addClass(props.inputClass);
+		                
+		var theSelectId = inputField.attr('id');
+		if(theSelectId){
+		  
+		  //handle birthday dropdowns
+		  if(theSelectId.indexOf('birthday') > -1){
+		    thisSelect += '<div class="' + props.containerClass + '">';
+		    thisSelect += '<label class="selectLabel">' + fieldLabel.text() + '</label>';
+		    thisSelect += inputField.filter('#birthday_month').addClass(props.inputClass)[0].outerHTML;
+		    thisSelect += '</div>';
+		    inputField.filter('#birthday_month').remove();
+		    thisSelect += '<div class="' + props.containerClass + '">';
+		    thisSelect += inputField.filter('#birthday_day').addClass(props.inputClass)[0].outerHTML;
+		    thisSelect += '</div>';
+		    inputField.filter('#birthday_day').remove();
+		    thisSelect += '<div class="' + props.containerClass + '">';
+		    thisSelect += inputField.filter('#birthday_year').addClass(props.inputClass)[0].outerHTML;
+		    thisSelect += '</div>';
+		    inputField.filter('#birthday_year').remove();
+		    thisSelect += '</div>';
+		  }else{
+		    
+		    //Select has an id, but is not a birthday.  unlikely scenario
+		    thisSelect += '<div class="' + props.containerClass + '">';
+		    thisSelect += '<label class="selectLabel">' + fieldLabel.text() + '</label>';
+		    thisSelect += inputField[0].outerHTML;
+		    thisSelect += '</div>';
+		  }
+		}else{
+
+		  //select has no id, not a birthday.
+		  thisSelect += '<div class="' + props.containerClass + '">';
+		  thisSelect += '<label class="selectLabel">' + fieldLabel.text() + '</label>';
+		  thisSelect += inputField[0].outerHTML;
+		  thisSelect += '</div>';
+		}
+
+		return thisSelect; 
+	}
+
+	function checkboxField(fieldLabel, inputField, props) {
+		var thisCheckbox = "";
+
+		if (fieldLabel.length) {		              
+		  if(props.checkboxContainerClass){
+		  	thisCheckbox += '<div class="' + props.checkboxContainerClass + '">';
+		  }else{
+		  	thisCheckbox += '<div class="' + props.containerClass + '">';
+		  }
+
+		  thisCheckbox += inputField[0].outerHTML;
+		  thisCheckbox += fieldLabel[0].outerHTML;
+		  thisCheckbox += '</div>';
+		}else{
+		  thisCheckbox += '<div class="' + props.containerClass + '">';
+		  thisCheckbox += inputField[0].outerHTML;
+		  thisCheckbox += '</div>';
+		}
+		return thisCheckbox;		
+	}
+
+	function getSubmitButton(containerClass){
+		var thisSubmit = "";
+		thisSubmit += '<div class="' + containerClass + '">';
+		thisSubmit += $('.submitButton')[0].outerHTML;
+		thisSubmit += '</div>';
+		return thisSubmit;		
 	}
 
 	/** When a test input is clicked, its label gets the class 'active'.  If the field is filled out, the class
@@ -316,10 +367,6 @@ if(typeof jQuery === 'undefined'){
 		  $('a span[id^="clickable"]').click(function(e){
 			e.stopPropagation();
 		  });
-
-	      $('button span[id^="clickable"]').click(function(e){
-	        e.stopPropagation();
-	      });
 		}
 	}
 })(jQuery);
