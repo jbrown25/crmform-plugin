@@ -130,7 +130,7 @@ if(typeof jQuery === 'undefined'){
 		
 		newForm.push(getSubmitButton(props.containerClass));
 
-		return newForm.join();
+		return newForm.join('');
 	}
 
 	function moreLabel(fieldLabel, props){
