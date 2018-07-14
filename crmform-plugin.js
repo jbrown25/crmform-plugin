@@ -151,7 +151,7 @@ if(typeof jQuery === 'undefined'){
 		switch(props.style) {
 			case "placeholders":
 				//Text placeholder, then add field to form
-		        theInputfield.attr('placeholder', fieldLabel.text());
+		        inputField.attr('placeholder', fieldLabel.text());
 		        thisInput += '<div class="' + props.containerClass + '">';
 		        thisInput += inputField[0].outerHTML;
 		        thisInput += '</div>';
@@ -164,7 +164,7 @@ if(typeof jQuery === 'undefined'){
 		        break;
 		    default:
 		    	//Text placeholder, then add field to form
-		        theInputfield.attr('placeholder', fieldLabel.text());
+		        inputField.attr('placeholder', fieldLabel.text());
 		        thisInput += '<div class="' + props.containerClass + '">';
 		        thisInput += inputField[0].outerHTML;
 		        thisInput += '</div>';
